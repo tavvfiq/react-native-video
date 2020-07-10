@@ -124,6 +124,7 @@ class ReactExoplayerView extends FrameLayout implements
     private long resumePosition;
     private boolean loadVideoStarted;
     private boolean isFullscreen;
+    private String fullScreenOrientation;
     private boolean isInBackground;
     private boolean isPaused;
     private boolean isBuffering;
@@ -282,6 +283,7 @@ class ReactExoplayerView extends FrameLayout implements
 
     public void cleanUpResources() {
         stopPlayback();
+        instances.remove(uid);
     }
 
     //BandwidthMeter.EventListener implementation
@@ -316,10 +318,6 @@ class ReactExoplayerView extends FrameLayout implements
         this.fullScreenDelegate = delegate;
     }
 
-    public void removeViewInstance() {
-        instances.remove(uid);
-    }
-
     // Internal methods
 
     /**
@@ -339,6 +337,7 @@ class ReactExoplayerView extends FrameLayout implements
         instances.put(uid, this);
         Intent intent = new Intent(getContext(), ExoPlayerFullscreenVideoActivity.class);
         intent.putExtra(ExoPlayerFullscreenVideoActivity.EXTRA_ID, this.uid);
+        intent.putExtra(ExoPlayerFullscreenVideoActivity.EXTRA_ORIENTATION, this.fullScreenOrientation);
         getContext().startActivity(intent);
     }
 
@@ -1347,6 +1346,10 @@ class ReactExoplayerView extends FrameLayout implements
             }
             eventEmitter.fullscreenDidDismiss();
         }
+    }
+
+    public void setFullscreenOrientation(String orientation) {
+        this.fullScreenOrientation = orientation;
     }
 
     public void setUseTextureView(boolean useTextureView) {
